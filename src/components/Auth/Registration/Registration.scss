@@ -10,8 +10,14 @@
     .section-card {
         margin: 130px 10px 0 0;
     }
-
-   
-    
 }
-      
+    
+.waitdialog {
+    display: flex;
+    flex-direction: column;
+    .anticon {
+        font-size: 6rem;
+        margin-bottom: 2rem;
+    }
+    text-align: center;
+}

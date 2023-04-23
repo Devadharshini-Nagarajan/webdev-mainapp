@@ -3,6 +3,11 @@
   flex-direction: column;
 }
 
+.row-flex {
+  display: flex;
+  flex-direction: row;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }

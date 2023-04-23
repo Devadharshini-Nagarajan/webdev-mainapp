@@ -16,6 +16,7 @@ import {
   Radio,
   Space,
   Checkbox,
+  Tag,
 } from "antd";
 import "./ProductsList.scss";
 import axios from "axios";
@@ -35,16 +36,30 @@ const ProductsList = () => {
   const [brandList, setBrandList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({
-    search: '',
+    search: "",
     price: null,
-    brand: null,
-    category: null,
+    brand: [],
+    category: [],
     rating: null,
     discount: null,
     isFav: null,
   });
   const { Search } = Input;
   const { Panel } = Collapse;
+
+  const priceMatch = {
+    1: "Under $25",
+    2: "$25 to $50",
+    3: "$50 to $100",
+    4: "$100 and above",
+  };
+
+  const discountMatch = {
+    1: "50% and above",
+    2: "40% to 50%",
+    3: "20% to 40%",
+    4: "Below 20%",
+  };
 
   useEffect(() => {
     getProducts();
@@ -94,20 +109,113 @@ const ProductsList = () => {
       .finally((_) => setLoading(false));
   };
 
-  const filterTable = (searchtext, allProducts) => {
+  const filterTable = (filters, allProducts) => {
     let mainData = allProducts;
-    // let value = searchtext.toLowerCase();
-    // if (value) {
-    //   let newData = mainData.filter(
-    //     (el) =>
-    //       el.name.toLowerCase().includes(value) ||
-    //       el.description.toLowerCase().includes(value) ||
-    //       el.brand.toLowerCase().includes(value)
-    //   );
-    //   setTableData(newData);
-    // } else {
-      setTableData(mainData);
-    // }
+    let searchValue = filters.search?.toLowerCase();
+    // search
+    if (searchValue) {
+      mainData = mainData.filter(
+        (el) =>
+          el.name.toLowerCase().includes(searchValue) ||
+          el.description.toLowerCase().includes(searchValue) ||
+          el.brand.toLowerCase().includes(searchValue)
+      );
+    }
+    // brand
+    if (filters.brand.length) {
+      mainData = mainData.filter((el) => filters.brand?.includes(el.brand));
+    }
+    // category
+    if (filters.category.length) {
+      mainData = mainData.filter((el) =>
+        filters.category?.includes(el.category)
+      );
+    }
+    // price
+    if (filters.price !== null) {
+      switch (parseInt(filters.price)) {
+        case 1:
+          mainData = mainData.filter((el) => parseInt(el.price) < 25);
+          break;
+
+        case 2:
+          mainData = mainData.filter(
+            (el) => parseInt(el.price) >= 25 && parseInt(el.price) < 50
+          );
+          break;
+
+        case 3:
+          mainData = mainData.filter(
+            (el) => parseInt(el.price) >= 50 && parseInt(el.price) < 100
+          );
+          break;
+
+        case 4:
+          mainData = mainData.filter((el) => parseInt(el.price) >= 100);
+          break;
+
+        default:
+          mainData = mainData;
+          break;
+      }
+    }
+
+    // rating
+    if (filters.rating !== null) {
+      console.log(parseInt(filters.rating), mainData);
+      switch (parseInt(filters.rating)) {
+        case 4:
+          mainData = mainData.filter((el) => parseInt(el.rating) >= 4);
+          console.log(mainData);
+          break;
+
+        case 3:
+          mainData = mainData.filter((el) => parseInt(el.rating) >= 3);
+          break;
+
+        case 2:
+          mainData = mainData.filter((el) => parseInt(el.rating) >= 2);
+          break;
+
+        case 1:
+          mainData = mainData.filter((el) => parseInt(el.rating) >= 1);
+          break;
+
+        default:
+          mainData = mainData;
+          break;
+      }
+    }
+
+    // discount
+    if (filters.discount !== null) {
+      switch (parseInt(filters.discount)) {
+        case 1:
+          mainData = mainData.filter((el) => parseInt(el.discount) >= 50);
+          break;
+
+        case 2:
+          mainData = mainData.filter(
+            (el) => parseInt(el.discount) > 40 && parseInt(el.discount) < 50
+          );
+          break;
+
+        case 3:
+          mainData = mainData.filter(
+            (el) => parseInt(el.discount) > 20 && parseInt(el.discount) <= 40
+          );
+          break;
+
+        case 4:
+          mainData = mainData.filter((el) => parseInt(el.discount) <= 20);
+          break;
+
+        default:
+          mainData = mainData;
+          break;
+      }
+    }
+    setTableData(mainData);
   };
 
   const onFilterChange = (e, name) => {
@@ -127,6 +235,45 @@ const ProductsList = () => {
       [name]: finalvalue,
     };
     setSelectedFilters(newFilter);
+    filterTable(newFilter, state.allProducts);
+  };
+
+  const clearFilters = () => {
+    let filter = {
+      search: "",
+      price: null,
+      brand: [],
+      category: [],
+      rating: null,
+      discount: null,
+      isFav: null,
+    };
+    setSelectedFilters(filter);
+    filterTable(filter, state.allProducts);
+  };
+
+  const getTagFilters = () => {
+    let tags = [];
+    Object.keys(selectedFilters).forEach((el) => {
+      if (selectedFilters[el]) {
+        if (el === "price") {
+          tags.push(priceMatch[selectedFilters[el]]);
+        }
+        if (el === "brand") {
+          tags.push(...selectedFilters[el]);
+        }
+        if (el === "category") {
+          tags.push(...selectedFilters[el]);
+        }
+        if (el === "discount") {
+          tags.push(discountMatch[selectedFilters[el]]);
+        }
+        if (el === "rating") {
+          tags.push(`${selectedFilters[el]} & up`);
+        }
+      }
+    });
+    return tags;
   };
 
   const { token } = theme.useToken();
@@ -182,11 +329,33 @@ const ProductsList = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "end",
-          margin: "0 25px 30px 0",
+          justifyContent: "space-between",
+          margin: "25px",
           marginTop: "1rem",
         }}
       >
+        <div>
+          <span>Filters: </span>
+
+          <Space size={[0, 8]} wrap>
+            {getTagFilters().map((el, key) => {
+              return (
+                <Tag
+                  color={
+                    "#" +
+                    (((1 << 24) * Math.random()) | 0)
+                      .toString(16)
+                      .padStart(6, "0")
+                  }
+                  key={key}
+                >
+                  {el}
+                </Tag>
+              );
+            })}
+          </Space>
+          <Button onClick={clearFilters}>Clear all</Button>
+        </div>
         <div>
           <Search
             placeholder="Search"
@@ -222,10 +391,13 @@ const ProductsList = () => {
                 value={selectedFilters.price}
               >
                 <Space direction="vertical">
-                  <Radio value={1}>Under $25</Radio>
-                  <Radio value={2}>$25 to $50</Radio>
-                  <Radio value={3}>$50 to $100</Radio>
-                  <Radio value={4}>$100 and above</Radio>
+                  {Object.keys(priceMatch).map((el) => {
+                    return (
+                      <Radio value={el} key={priceMatch[el]}>
+                        {priceMatch[el]}
+                      </Radio>
+                    );
+                  })}
                 </Space>
               </Radio.Group>
             </Panel>
@@ -270,10 +442,13 @@ const ProductsList = () => {
                 value={selectedFilters.discount}
               >
                 <Space direction="vertical">
-                  <Radio value={1}>50% and above</Radio>
-                  <Radio value={2}>40% to 50%</Radio>
-                  <Radio value={3}>20% to 40%</Radio>
-                  <Radio value={4}>Below 20%</Radio>
+                  {Object.keys(discountMatch).map((el) => {
+                    return (
+                      <Radio value={el} key={discountMatch[el]}>
+                        {discountMatch[el]}
+                      </Radio>
+                    );
+                  })}
                 </Space>
               </Radio.Group>
             </Panel>

@@ -18,11 +18,17 @@ const Main = () => {
   const navigateProfile = () => {
     navigate("/profile");
   };
+
+  const navigateDashboard = () => {
+    navigate("/dashboard");
+  };
+
   return (
     <div>
       <div onClick={navigateProfile}>Profile</div>
       {state.login.isAdmin && <div onClick={navigateUsersList}>Users</div>}
       <div onClick={navigateProducts}>Prodcuts</div>
+      <div onClick={navigateDashboard}>Dashboard</div>
     </div>
   );
 };

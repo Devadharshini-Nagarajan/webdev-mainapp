@@ -1,6 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Form, Input, Button, Card, Row, Col, Select, message } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Row,
+  Col,
+  Select,
+  message,
+  Modal,
+} from "antd";
+import {
+  UserOutlined,
+  LockOutlined,
+  CheckCircleTwoTone,
+} from "@ant-design/icons";
 
 import { ProjectContext } from "../../Context";
 import axios from "axios";
@@ -13,6 +27,7 @@ const Registration = () => {
   const [state, dispatch] = useContext(ProjectContext);
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const { Option } = Select;
@@ -23,6 +38,10 @@ const Registration = () => {
     }
   }, []);
 
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const onFinish = (values) => {
     setLoading(true);
     let apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
@@ -31,11 +50,11 @@ const Registration = () => {
     axios
       .post(`${apiEndpoint}/addUser`, values)
       .then((res) => {
-        messageApi.open({
-          type: "success",
-          content: "Successfully registered in",
-        });
-        navigate("/login");
+        setIsModalOpen(true);
+        setTimeout(function () {
+          setIsModalOpen(false);
+          navigate("/login");
+        }, 3000);
       })
       .catch((err) => {
         messageApi.destroy();
@@ -69,6 +88,20 @@ const Registration = () => {
           </Card>
         </Col>
       </Row>
+      <Modal
+        title=""
+        open={isModalOpen}
+        closable={false}
+        width={400}
+        height={400}
+        footer={null}
+      >
+        <div className="waitdialog">
+          <CheckCircleTwoTone twoToneColor="#52c41a" />
+          Registration Successfull. Page will be redirected in 5 secs. Happy
+          shopping!!!
+        </div>
+      </Modal>
     </div>
   );
 };

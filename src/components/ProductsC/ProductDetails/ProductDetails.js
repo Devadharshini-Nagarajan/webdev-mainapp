@@ -1,4 +1,4 @@
-import { React, useState, useContext, useEffect } from "react";
+import { React, useState, useContext, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ProjectContext } from "../../Context";
 import axios from "axios";
@@ -32,6 +32,7 @@ function ProductDetails() {
   const [othersReviews, setOthersReviews] = useState([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const navigate = useNavigate();
+  const ref = useRef(null);
 
   const { TextArea } = Input;
   useEffect(() => {
@@ -173,6 +174,17 @@ function ProductDetails() {
     return dayjs(date).format("DD MMM YYYY HH:mm");
   };
 
+  const getDiscount = () => {
+    if (details.price && details.discount)
+      return (
+        parseInt(details?.price) *
+        ((100 - parseInt(details?.discount)) / 100).toFixed(0)
+      );
+  };
+  const onScrollReviews = () => {
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div style={{ margin: "30px" }}>
       {contextHolder}
@@ -196,11 +208,15 @@ function ProductDetails() {
               <span>{details.brand}</span>
             </h4>
             <Rate disabled value={details.rating} />
-            <small> 55 Reviews</small>
+            <small onClick={onScrollReviews} style={{ cursor: "pointer" }}>
+              {othersReviews.length + (myReview ? 1 : 0)} Reviews
+            </small>
             <div style={{ marginTop: "15px" }}>
-              <strong>$ {details.price}</strong>
-              {/* add discount logic */}
-
+              <strong>${getDiscount()}</strong>&nbsp;&nbsp;
+              <span style={{ fontFamily: "fantasy" }}>
+                (Discount: {details.discount}%)
+              </span>
+              <p>Original Amount $ {details.price}</p>
               <p>{details.sold} sold out</p>
             </div>
 
@@ -208,7 +224,7 @@ function ProductDetails() {
               <div className="actions">
                 <Button
                   type="primary"
-                  style={{ width: "100px", marginRight: "10px" }}
+                  style={{ marginRight: "10px" }}
                   onClick={() => setIsModalOpen(true)}
                 >
                   {purchased.length ? "Order Again" : "Purchase"}
@@ -216,14 +232,18 @@ function ProductDetails() {
               </div>
             )}
 
-            <span style={{ marginTop: "10px" }}>{details.description}</span>
+            <h2>About the product</h2>
             <div className="set2">
-              <div className="column-flex">
-                <strong>Category</strong>
+              <div>
+                <b>Description: &nbsp;&nbsp;</b>
+                <span>{details.description}</span>
+              </div>
+              <div>
+                <b>Category: &nbsp;</b>
                 <span>{details.category}</span>
               </div>
-              <div className="column-flex">
-                <strong>Standard size</strong>
+              <div>
+                <b>Standard size: &nbsp;</b>
                 <span>{details.quantityml} ml</span>
               </div>
             </div>
@@ -285,7 +305,7 @@ function ProductDetails() {
             label: "Reviews",
             key: "1",
             children: (
-              <div>
+              <div ref={ref}>
                 {purchased.length > 0 && !state.login.isAdmin && (
                   <>
                     <h2>My Review</h2>
@@ -305,7 +325,7 @@ function ProductDetails() {
                 <h2>Other Reviews</h2>
                 {othersReviews.length
                   ? othersReviews.map((el) => {
-                      return <Review review={el} />;
+                      return <Review review={el} key={el.reviewid} />;
                     })
                   : "No other reviews yet"}
               </div>
@@ -317,9 +337,9 @@ function ProductDetails() {
             children: (
               <div>
                 {purchased.length
-                  ? purchased.map((el) => {
+                  ? purchased.map((el, key) => {
                       return (
-                        <Card style={{ marginBottom: "20px" }}>
+                        <Card style={{ marginBottom: "20px" }} key={key}>
                           {el.productname}
                           <br></br>
                           <span style={{ fontFamily: "initial" }}>
