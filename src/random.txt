@@ -1,0 +1,639 @@
+details:
+
+
+import { React, useState, useContext, useEffect } from "react";
+import {
+  Card,
+  notification,
+  Rate,
+  Button,
+  Input,
+  Switch,
+  Tooltip,
+  Result,
+  Carousel,
+} from "antd";
+import "./ProductsList.scss";
+import axios from "axios";
+import { ProjectContext } from "../../Context";
+import { Link } from "react-router-dom";
+import BackButton from "../../BackButton";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+
+const ProductsList = () => {
+  const [state, dispatch] = useContext(ProjectContext);
+  const [loading, setLoading] = useState(false);
+  const [tableData, setTableData] = useState([]);
+  const [search, setSearch] = useState("");
+  const { Search } = Input;
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(`${state.login.companyUrl}/getProducts/`)
+      .then((res) => {
+        let filteredData = res.data;
+        dispatch({
+          type: "updateAllProducts",
+          payload: filteredData,
+        });
+        filterTable(search, filteredData);
+      })
+      .catch((_) => {
+        notification.error({
+          key: "api_error",
+          message: "Failed to fetch products list",
+          description: "Try again later.",
+        });
+      })
+      .finally((_) => setLoading(false));
+  }, []);
+
+  const onSearch = (e) => {
+    setSearch(e.target.value);
+    filterTable(e.target.value, state.allProducts);
+  };
+
+  const filterTable = (searchtext, allProducts) => {
+    let mainData = allProducts;
+    let value = searchtext.toLowerCase();
+    if (value) {
+      let newData = mainData.filter(
+        (el) =>
+          el.name.toLowerCase().includes(value) ||
+          el.description.toLowerCase().includes(value) ||
+          el.brand.toLowerCase().includes(value)
+      );
+      setTableData(newData);
+    } else {
+      setTableData(mainData);
+    }
+  };
+
+  return (
+    <div className="list-content">
+      <Carousel autoplay>
+        <div>
+          <img
+            className="img-carousel"
+            src={`${process.env.PUBLIC_URL}/assets/imgs/producstlanding.avif`}
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-april-skin-bundle-c-site-home-page-hero-banner-beauty-only-us-can-image-only.jpg?imwidth=1090"
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-4-5-rare-beauty-summer-newness-site-desktop-mobile-home-page-rwd-hero-banner-1000x750-can.jpg?imwidth=1090"
+          />
+        </div>
+        <div>
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-4-9-jo-malone-london-sakura-cherry-blossom-cologne-site-desktop-mobile-home-page-rwd-hero-banner-1000x750-en-us-can.jpg?imwidth=1090"
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-04-07-slotting-bestsellers-v2-site-responsive-home-page-hero-banner-2022-xxXxx-slotting-bestsellers-v2-site-mobile-home-page-hero-banner-US_01.jpg?imwidth=1090"
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-4-1-sc-sku-site-desktop-home-page-rwd-marketing-banner-800x256-en-us-can.jpg?imwidth=800"
+          />
+        </div>
+        <div>
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-04-14-mascara-mbc-site-desktop-mobile-home-page-marketing-banner-800x256-image-only-can-en.jpg?imwidth=800"
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-4-1-sc-sku-site-desktop-home-page-rwd-marketing-banner-800x256-en-us-can.jpg?imwidth=800"
+          />
+        </div>
+      </Carousel>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          margin: "0 25px 30px 0",
+          marginTop: "1rem",
+        }}
+      >
+        <div>
+          <Search
+            placeholder="Search"
+            onChange={onSearch}
+            value={search}
+            style={{
+              width: 200,
+              marginLeft: "20px",
+            }}
+          />
+        </div>
+      </div>
+      {tableData.length ? (
+        <div className="cardlist-row">
+          {tableData?.map((product) => {
+            return (
+              <div span={6} key={product.productid}>
+                <Card className="card" loading={loading}>
+                  <div className="card-row">
+                    <img
+                      src={`data:image/jpeg;base64,${product.imagefile}`}
+                      onError={({ currentTarget }) => {
+                        currentTarget.onerror = null; // prevents looping
+                        currentTarget.src = `${process.env.PUBLIC_URL}/assets/imgs/noimage.png`;
+                      }}
+                      alt={product.name}
+                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Link to={`/product/${product.productid}`}>
+                        <span>{product.name}</span>
+                      </Link>
+                      <span>{product.brand}</span>
+                      <span>{product.price}</span>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <Result
+          className="result-products"
+          status="warning"
+          title="No data found"
+        />
+      )}
+    </div>
+  );
+};
+
+export default ProductsList;
+
+
+
+productslist:
+
+import { React, useState, useContext, useEffect } from "react";
+import {
+  Card,
+  notification,
+  Rate,
+  Button,
+  Input,
+  Switch,
+  Tooltip,
+  Result,
+  Carousel,
+} from "antd";
+import "./ProductsList.scss";
+import axios from "axios";
+import { ProjectContext } from "../../Context";
+import { Link } from "react-router-dom";
+import BackButton from "../../BackButton";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+
+const ProductsList = () => {
+  const [state, dispatch] = useContext(ProjectContext);
+  const [loading, setLoading] = useState(false);
+  const [tableData, setTableData] = useState([]);
+  const [search, setSearch] = useState("");
+  const { Search } = Input;
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(`${state.login.companyUrl}/getProducts/`)
+      .then((res) => {
+        let filteredData = res.data;
+        dispatch({
+          type: "updateAllProducts",
+          payload: filteredData,
+        });
+        filterTable(search, filteredData);
+      })
+      .catch((_) => {
+        notification.error({
+          key: "api_error",
+          message: "Failed to fetch products list",
+          description: "Try again later.",
+        });
+      })
+      .finally((_) => setLoading(false));
+  }, []);
+
+  const onSearch = (e) => {
+    setSearch(e.target.value);
+    filterTable(e.target.value, state.allProducts);
+  };
+
+  const filterTable = (searchtext, allProducts) => {
+    let mainData = allProducts;
+    let value = searchtext.toLowerCase();
+    if (value) {
+      let newData = mainData.filter(
+        (el) =>
+          el.name.toLowerCase().includes(value) ||
+          el.description.toLowerCase().includes(value) ||
+          el.brand.toLowerCase().includes(value)
+      );
+      setTableData(newData);
+    } else {
+      setTableData(mainData);
+    }
+  };
+
+  return (
+    <div className="list-content">
+      <Carousel autoplay>
+        <div>
+          <img
+            className="img-carousel"
+            src={`${process.env.PUBLIC_URL}/assets/imgs/producstlanding.avif`}
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-april-skin-bundle-c-site-home-page-hero-banner-beauty-only-us-can-image-only.jpg?imwidth=1090"
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-4-5-rare-beauty-summer-newness-site-desktop-mobile-home-page-rwd-hero-banner-1000x750-can.jpg?imwidth=1090"
+          />
+        </div>
+        <div>
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-4-9-jo-malone-london-sakura-cherry-blossom-cologne-site-desktop-mobile-home-page-rwd-hero-banner-1000x750-en-us-can.jpg?imwidth=1090"
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-04-07-slotting-bestsellers-v2-site-responsive-home-page-hero-banner-2022-xxXxx-slotting-bestsellers-v2-site-mobile-home-page-hero-banner-US_01.jpg?imwidth=1090"
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-4-1-sc-sku-site-desktop-home-page-rwd-marketing-banner-800x256-en-us-can.jpg?imwidth=800"
+          />
+        </div>
+        <div>
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-04-14-mascara-mbc-site-desktop-mobile-home-page-marketing-banner-800x256-image-only-can-en.jpg?imwidth=800"
+          />
+          <img
+            className="img-carousel"
+            src="https://www.sephora.com/contentimages/2023-4-1-sc-sku-site-desktop-home-page-rwd-marketing-banner-800x256-en-us-can.jpg?imwidth=800"
+          />
+        </div>
+      </Carousel>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          margin: "0 25px 30px 0",
+          marginTop: "1rem",
+        }}
+      >
+        <div>
+          <Search
+            placeholder="Search"
+            onChange={onSearch}
+            value={search}
+            style={{
+              width: 200,
+              marginLeft: "20px",
+            }}
+          />
+        </div>
+      </div>
+      {tableData.length ? (
+        <div className="cardlist-row">
+          {tableData?.map((product) => {
+            return (
+              <div span={6} key={product.productid}>
+                <Card className="card" loading={loading}>
+                  <div className="card-row">
+                    <img
+                      src={`data:image/jpeg;base64,${product.imagefile}`}
+                      onError={({ currentTarget }) => {
+                        currentTarget.onerror = null; // prevents looping
+                        currentTarget.src = `${process.env.PUBLIC_URL}/assets/imgs/noimage.png`;
+                      }}
+                      alt={product.name}
+                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Link to={`/product/${product.productid}`}>
+                        <span>{product.name}</span>
+                      </Link>
+                      <span>{product.brand}</span>
+                      <span>{product.price}</span>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <Result
+          className="result-products"
+          status="warning"
+          title="No data found"
+        />
+      )}
+    </div>
+  );
+};
+
+export default ProductsList;
+
+
+login
+
+import React, { useContext, useEffect, useState } from "react";
+import { Form, Input, Button, Card, Row, Col, Select, message } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+
+import { ProjectContext } from "../../Context";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+
+import "./Login.scss";
+
+const Login = () => {
+  const [state, dispatch] = useContext(ProjectContext);
+  const [loading, setLoading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
+
+  const { Option } = Select;
+
+  useEffect(() => {
+    if (state.login.is_authenticated) {
+      navigate("/");
+    }
+  }, []);
+  
+  const onFinish = (values) => {
+    setLoading(true);
+    let apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+    axios
+      .post(`${apiEndpoint}/login`, values)
+      .then((res) => {
+        let loginValues = {
+          companyUrl: apiEndpoint,
+          isAdmin: res.data.role === "admin",
+          ...res.data,
+        };
+        messageApi.open({
+          type: "success",
+          content: "Successfully logged in",
+        });
+        dispatch({
+          type: "updateLogin",
+          payload: loginValues,
+        });
+        navigate("/");
+      })
+      .catch((err) => {
+        messageApi.destroy();
+        messageApi.open({
+          type: "error",
+          content: "Authentication error.Username or password is incorrect. ",
+        });
+        console.log(err);
+      })
+      .finally((_) => setLoading(false));
+  };
+
+  return (
+    <div className="login">
+      {contextHolder}
+      <Row justify="center">
+        <Card className="loginCard">
+          <Row>
+            <Col span={12} className="left"></Col>
+            <Col span={12} className="right" align="center">
+              <Row>
+                <img
+                  className="top-img"
+                  src={`${process.env.PUBLIC_URL}/assets/imgs/beyou.png`}
+                  alt="logo"
+                />
+                <span className="heading" style={{ width: "100%" }}>
+                  Blah and Blah Management App
+                </span>
+                <span className="content">
+                  Welcome to the World of Skincare. Login using your credentials
+                </span>
+              </Row>
+              <Form onFinish={onFinish} className="login-form">
+                <Form.Item
+                  name="username"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your username!",
+                    },
+                  ]}
+                >
+                  <Input
+                    prefix={
+                      <UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />
+                    }
+                    placeholder="Username"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="password"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your password!",
+                    },
+                  ]}
+                >
+                  <Input
+                    prefix={
+                      <LockOutlined style={{ color: "rgba(0,0,0,.25)" }} />
+                    }
+                    type="password"
+                    placeholder="Password"
+                  />
+                </Form.Item>
+
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                    className="login-btn"
+                  >
+                    Log in
+                  </Button>
+                </Form.Item>
+              </Form>
+              <Link to="/registration">
+                <span className="noaccount-text">
+                  Don't have an account? Register here
+                </span>
+              </Link>
+            </Col>
+          </Row>
+        </Card>
+      </Row>
+      <div className="footer">
+        <span>Developed by deva&nbsp;&nbsp;</span>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
+
+
+
+userslist
+
+
+import { React, useState, useContext, useEffect } from "react";
+import "./UsersList.scss";
+import { Link } from "react-router-dom";
+import { ProjectContext } from "../../Context";
+import axios from "axios";
+import { notification, Table, Space, Button, Input } from "antd";
+import NotAllowed from "../../NotAllowed";
+import BackButton from "../../BackButton";
+
+function UsersList(props) {
+  const [state, dispatch] = useContext(ProjectContext);
+  const [loading, setLoading] = useState(false);
+  const [tableData, setTableData] = useState([]);
+  const { Search } = Input;
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(`${state.login.companyUrl}/getUsers`)
+      .then((res) => {
+        let filteredData = res.data.filter(
+          (el) => el.username !== state.login.username
+        );
+        dispatch({
+          type: "updateAllUsers",
+          payload: filteredData,
+        });
+        setTableData(filteredData);
+      })
+      .catch((_) => {
+        notification.error({
+          key: "api_error",
+          message: "Failed to fetch products list",
+          description: "Try again later.",
+        });
+      })
+      .finally((_) => setLoading(false));
+  }, []);
+
+  const columns = [
+    {
+      title: "Username",
+      dataIndex: "username",
+      key: "username",
+    },
+    {
+      title: "First Name",
+      dataIndex: "firstname",
+      key: "firstname",
+    },
+    {
+      title: "Last Name",
+      dataIndex: "lastname",
+      key: "lastname",
+    },
+
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (_, record) => <span>{record.role?.toUpperCase()}</span>,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <a href={`/user/${record.username}`}>View</a>
+        </Space>
+      ),
+    },
+  ];
+
+  const onSearch = (e) => {
+    let value = e.target.value.toLowerCase();
+    if (value) {
+      let newData = state.allUsers.filter(
+        (el) =>
+          el.username.toLowerCase().includes(value) ||
+          el.firstname.toLowerCase().includes(value) ||
+          el.lastname.toLowerCase().includes(value) ||
+          el.email.toLowerCase().includes(value)
+      );
+      setTableData(newData);
+    } else {
+      setTableData(state.allUsers);
+    }
+  };
+
+  return (
+    <div className="userslist-content">
+      <BackButton path="/" />
+      <div className="table-content">
+        {state.login.isAdmin ? (
+          <>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Link to={`/addUser`}>
+                <Button type="primary" className="addbtn">
+                  Add User
+                </Button>
+              </Link>
+              <Search
+                placeholder="Search"
+                onChange={onSearch}
+                style={{
+                  width: 200,
+                }}
+              />
+            </div>
+            <Table columns={columns} dataSource={tableData} rowKey="userid" />
+          </>
+        ) : (
+          <NotAllowed />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default UsersList;

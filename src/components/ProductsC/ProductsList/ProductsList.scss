@@ -1,0 +1,54 @@
+.list-content {
+    // padding: 50px 0;
+    width: 100%;
+    background: #d3d3d32b;
+    .filterscolumn {
+        background: white;
+        .ant-checkbox-group  {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            align-items: baseline;
+        }
+        .ratingList {
+            .ant-rate-star {
+                color: black;
+            }
+        }
+    }
+    .cardlist-row {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        column-gap: 15px;
+        row-gap: 30px;
+        padding: 0 30px;
+        padding-bottom: 40px;
+        .ant-card {
+            min-height: 18rem;
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 6px;
+        }
+    }
+    .card-row {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        img {
+            margin-right: 20px;
+            width: 150px;
+            height: 150px;
+        }
+    }
+    .result-products {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .ant-carousel .slick-list .slick-slide >div>div {
+        display: flex !important;
+    }
+    .img-carousel {
+        height: 50vh;
+    }
+}
+
