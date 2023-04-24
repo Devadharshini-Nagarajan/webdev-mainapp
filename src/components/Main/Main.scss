@@ -1,0 +1,35 @@
+.home-content {
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+    // padding: 0 100px;
+    width: 100%;
+
+    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxXc43oXgxV_D6bPT1k-xAF9lWvWneM3pdnQ&usqp=CAU");
+    background-size: cover;
+
+    .cardsection {
+        margin-top: 11rem;
+        padding-right: 60px;
+        .ant-card  {
+            cursor: pointer;
+            margin-bottom: 40px;
+            
+        }
+    }
+    .detailssection {
+        margin-top: 11rem;
+        padding-left: 30px;
+        .detail-title {
+            font-size: 34px;
+            font-weight: 700;
+            font-family: fantasy;
+        }
+        .details-desc {
+            font-size: 19px;
+            line-height: 31px;
+            margin-top: 12px;
+        }
+    }
+   
+}

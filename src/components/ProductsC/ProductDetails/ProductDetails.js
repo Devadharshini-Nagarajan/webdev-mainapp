@@ -88,12 +88,12 @@ function ProductDetails() {
       username: state.login.username,
       productid: id,
       productname: details.name,
+      category: details.category,
     };
     let apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
     axios
       .post(`${apiEndpoint}/addPurchaseProduct`, values)
       .then((res) => {
-        console.log(res);
         messageApi.open({
           type: "success",
           content: "Successfully purchased the product",
@@ -178,8 +178,8 @@ function ProductDetails() {
     if (details.price && details.discount)
       return (
         parseInt(details?.price) *
-        ((100 - parseInt(details?.discount)) / 100).toFixed(0)
-      );
+        ((100 - parseInt(details?.discount)) / 100)
+      )?.toFixed(2);
   };
   const onScrollReviews = () => {
     ref.current?.scrollIntoView({ behavior: "smooth" });

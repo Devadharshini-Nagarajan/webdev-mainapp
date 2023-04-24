@@ -190,6 +190,18 @@ function UserForm(props) {
             >
               <Input type="text" placeholder="Zipcode" />
             </Form.Item>
+            <Form.Item
+              name="country"
+              label="Country"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input country!",
+                },
+              ]}
+            >
+              <Input type="text" placeholder="Country" />
+            </Form.Item>
           </div>
           <div className="userform-btn">
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
