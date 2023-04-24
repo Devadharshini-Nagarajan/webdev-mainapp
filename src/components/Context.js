@@ -17,6 +17,7 @@ const initialState = {
   login: getLoginFromLocal(),
   allProducts: [],
   allusers: [],
+  allCountries: [],
 };
 
 export const ProjectContext = createContext(initialState);
@@ -37,6 +38,9 @@ const reducer = (state, { type, payload }) => {
       break;
     case "updateAllUsers":
       state = { ...state, allUsers: payload };
+      break;
+    case "updateAllCountries":
+      state = { ...state, allCountries: payload };
       break;
 
     default:

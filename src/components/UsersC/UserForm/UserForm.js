@@ -1,8 +1,33 @@
-import React from "react";
-import { Button, Form, Input } from "antd";
+import React, { useContext, useEffect } from "react";
+import { Button, Form, Input, Select } from "antd";
 import "./UserForm.scss";
+import { ProjectContext } from "../../Context";
+import axios from "axios";
 
 function UserForm(props) {
+  const [state, dispatch] = useContext(ProjectContext);
+  const { Option } = Select;
+
+  useEffect(() => {
+    fetchCountries();
+    return () => {};
+  }, []);
+
+  const fetchCountries = async () => {
+    axios.get("https://disease.sh/v3/covid-19/countries").then((res) => {
+      const countries = res.data.map((el) => ({
+        country: el.country,
+        countryInfo: el.countryInfo,
+        count: 0,
+        continent: el.continent,
+      }));
+      dispatch({
+        type: "updateAllCountries",
+        payload: countries,
+      });
+    });
+  };
+
   return (
     <div>
       <fieldset disabled={props.readOnly}>
@@ -200,7 +225,11 @@ function UserForm(props) {
                 },
               ]}
             >
-              <Input type="text" placeholder="Country" />
+              <Select placeholder="Select country">
+                {state.allCountries.map((el) => {
+                  return <Option value={el.country}>{el.country}</Option>;
+                })}
+              </Select>
             </Form.Item>
           </div>
           <div className="userform-btn">
