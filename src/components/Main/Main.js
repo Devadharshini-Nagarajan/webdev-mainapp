@@ -29,12 +29,14 @@ const Main = () => {
       <Row>
         <Col span={12} className="detailssection">
           <Row className="detail-title">
-            Rwandom content header tos howcase here about this app
+            Glow up with us. Your ultimate skincare companion.
           </Row>
           <div className="details-desc">
-            Just detailed stuff availavble sections Just detailed stuff
-            availavble sections Just detailed stuff availavble sections Just
-            detailed stuff availavble sections
+            Skincare isn't just about looking good – it's about feeling
+            confident in your own skin. With{" "}
+            <b style={{ fontFamily: "cursive", fontSize: "26px" }}>Be You</b> ,
+            you'll find the right products to nourish and protect your skin, so
+            you can feel great every day.
           </div>
         </Col>
         <Col span={12} className="cardsection">
@@ -42,7 +44,7 @@ const Main = () => {
           {state.login.isAdmin && (
             <Card onClick={navigateUsersList}>Users</Card>
           )}
-          <Card onClick={navigateProducts}>Prodcuts</Card>
+          <Card onClick={navigateProducts}>Products</Card>
           <Card onClick={navigateDashboard}>Dashboard</Card>
         </Col>
       </Row>

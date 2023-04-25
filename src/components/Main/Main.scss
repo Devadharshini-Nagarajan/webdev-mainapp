@@ -8,13 +8,29 @@
     background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxXc43oXgxV_D6bPT1k-xAF9lWvWneM3pdnQ&usqp=CAU");
     background-size: cover;
 
+
+    // background: #F1F2B5;  /* fallback for old browsers */
+    // background: -webkit-linear-gradient(to right, #135058, #F1F2B5);  /* Chrome 10-25, Safari 5.1-6 */
+    // background: linear-gradient(to right, #135058, #F1F2B5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
+    
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 20s ease infinite;
+    
+    color: white;
+
     .cardsection {
         margin-top: 11rem;
         padding-right: 60px;
         .ant-card  {
             cursor: pointer;
             margin-bottom: 40px;
-            
+            // background: linear-gradient(to right,#185a9d, #43cea2);
+            // color: white;
+            font-weight: 700;
+            font-size: 18px;
+           
         }
     }
     .detailssection {
@@ -32,4 +48,16 @@
         }
     }
    
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }

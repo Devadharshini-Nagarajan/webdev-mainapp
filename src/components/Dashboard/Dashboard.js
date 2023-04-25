@@ -85,7 +85,6 @@ function Dashoboard(props) {
             value: filteredData.filter((fi) => fi.category === categ).length,
           };
         });
-        console.log(categories);
         setPurchased(filteredData);
         setProductsSoldCategoryPie(categories);
       })
@@ -136,6 +135,7 @@ function Dashoboard(props) {
             key: "2",
             children: (
               <div>
+                <h2>No of Users: {allUsers.length} </h2>
                 {state.login.isAdmin && mapCountries.length > 0 && (
                   <Map
                     center={mapCenter}
