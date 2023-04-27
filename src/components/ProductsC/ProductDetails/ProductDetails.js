@@ -14,6 +14,7 @@ import {
   Card,
   Form,
   Tag,
+  notification,
 } from "antd";
 import dayjs from "dayjs";
 
@@ -186,7 +187,26 @@ function ProductDetails() {
     ref.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const notifyMe = () => {};
+  const notifyMe = () => {
+    setLoading(true);
+    axios
+      .get(`${state.login.companyUrl}/sendmail/${state.login.email}`)
+      .then((res) => {
+        notification.success({
+          message: "Hurray! Successful",
+          description:
+            "You will be notified via email once product is back in stock",
+        });
+      })
+      .catch((_) => {
+        notification.error({
+          key: "api_error",
+          message: "Failed to set notify email",
+          description: "Try again later.",
+        });
+      })
+      .finally((_) => setLoading(false));
+  };
 
   return (
     <div style={{ margin: "30px" }}>
@@ -237,18 +257,18 @@ function ProductDetails() {
               )}
 
               {!state.login.isAdmin && !details.instock && (
-                // <div className="actions">
-                //   <Button
-                //     danger
-                //     style={{ marginRight: "10px" }}
-                //     onClick={notifyMe}
-                //   >
-                //     Notify me
-                //   </Button>
-                // </div>
-                <Tag color="cyan" style={{ width: "fit-content" }}>
-                  Sorry, not in stock
-                </Tag>
+                <div className="">
+                  <Button
+                    danger
+                    style={{ marginRight: "10px" }}
+                    onClick={notifyMe}
+                  >
+                    Notify me
+                  </Button>
+                  <Tag color="cyan" style={{ width: "fit-content" }}>
+                    Sorry, not in stock
+                  </Tag>
+                </div>
               )}
 
               <h2>About the product</h2>
