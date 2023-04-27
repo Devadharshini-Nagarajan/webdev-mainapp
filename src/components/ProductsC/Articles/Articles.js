@@ -10,7 +10,7 @@ function Articles(props) {
   const [articleList, setArticleList] = useState([]);
 
   useEffect(() => {
-    // getArticles();
+    getArticles();
     return () => {};
   }, []);
 
