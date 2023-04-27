@@ -3,6 +3,7 @@ import "./Main.scss";
 import { useNavigate } from "react-router-dom";
 import { ProjectContext } from "../Context";
 import { Card, Col, Row } from "antd";
+import { RightOutlined } from "@ant-design/icons";
 
 const Main = () => {
   const [state, dispatch] = useContext(ProjectContext);
@@ -40,12 +41,60 @@ const Main = () => {
           </div>
         </Col>
         <Col span={12} className="cardsection">
-          <Card onClick={navigateProfile}>Profile</Card>
+          <Card onClick={navigateProfile}>
+            <div className="card-row">
+              <div>
+                <img
+                  className="img"
+                  src={`${process.env.PUBLIC_URL}/assets/imgs/user.png`}
+                  alt="logo"
+                />
+                Profile
+              </div>
+              <RightOutlined />
+            </div>
+          </Card>
           {state.login.isAdmin && (
-            <Card onClick={navigateUsersList}>Users</Card>
+            <Card onClick={navigateUsersList}>
+              <div className="card-row">
+                <div>
+                  <img
+                    className="img"
+                    src={`${process.env.PUBLIC_URL}/assets/imgs/users.png`}
+                    alt="logo"
+                  />
+                  Users
+                </div>
+                <RightOutlined />
+              </div>
+            </Card>
           )}
-          <Card onClick={navigateProducts}>Products</Card>
-          <Card onClick={navigateDashboard}>Dashboard</Card>
+          <Card onClick={navigateProducts}>
+            <div className="card-row">
+              <div>
+                <img
+                  className="img"
+                  src={`${process.env.PUBLIC_URL}/assets/imgs/product.png`}
+                  alt="logo"
+                />
+                Products
+              </div>
+              <RightOutlined />
+            </div>
+          </Card>
+          <Card onClick={navigateDashboard}>
+            <div className="card-row">
+              <div>
+                <img
+                  className="img"
+                  src={`${process.env.PUBLIC_URL}/assets/imgs/dashboard.png`}
+                  alt="logo"
+                />
+                Dashboard
+              </div>
+              <RightOutlined />
+            </div>
+          </Card>
         </Col>
       </Row>
     </div>

@@ -123,7 +123,7 @@ function UserForm(props) {
                 },
               ]}
             >
-              <Input type="text" placeholder="Phone number" />
+              <Input type="text" maxLength={12} placeholder="Phone number" />
             </Form.Item>
             <Form.Item
               name="password"
