@@ -381,7 +381,7 @@ const ProductsList = () => {
         <Col span={6} className="filterscolumn">
           <Collapse
             bordered={false}
-            // defaultActiveKey={["1"]}
+            defaultActiveKey={["1", "2"]}
             expandIcon={({ isActive }) => (
               <CaretRightOutlined rotate={isActive ? 90 : 0} />
             )}

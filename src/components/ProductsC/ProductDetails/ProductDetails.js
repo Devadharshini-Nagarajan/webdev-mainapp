@@ -13,6 +13,7 @@ import {
   Tabs,
   Card,
   Form,
+  Tag,
 } from "antd";
 import dayjs from "dayjs";
 
@@ -185,6 +186,8 @@ function ProductDetails() {
     ref.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const notifyMe = () => {};
+
   return (
     <div style={{ margin: "30px" }}>
       {contextHolder}
@@ -221,7 +224,7 @@ function ProductDetails() {
                 <p>{details.sold} sold out</p>
               </div>
 
-              {!state.login.isAdmin && (
+              {!state.login.isAdmin && details.instock && (
                 <div className="actions">
                   <Button
                     type="primary"
@@ -231,6 +234,21 @@ function ProductDetails() {
                     {purchased.length ? "Order Again" : "Purchase"}
                   </Button>
                 </div>
+              )}
+
+              {!state.login.isAdmin && !details.instock && (
+                // <div className="actions">
+                //   <Button
+                //     danger
+                //     style={{ marginRight: "10px" }}
+                //     onClick={notifyMe}
+                //   >
+                //     Notify me
+                //   </Button>
+                // </div>
+                <Tag color="cyan" style={{ width: "fit-content" }}>
+                  Sorry, not in stock
+                </Tag>
               )}
 
               <h2>About the product</h2>
