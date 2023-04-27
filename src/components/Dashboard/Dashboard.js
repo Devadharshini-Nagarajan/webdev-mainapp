@@ -122,7 +122,7 @@ function Dashoboard(props) {
         style={{ marginBottom: "12rem" }}
         items={[
           {
-            label: "Products sold",
+            label: state.login.isAdmin ? "Products Sold" : "Purchased Products",
             key: "1",
             children: (
               <div>
@@ -130,7 +130,7 @@ function Dashoboard(props) {
               </div>
             ),
           },
-          {
+          state.login.isAdmin && {
             label: "Users map",
             key: "2",
             children: (

@@ -68,7 +68,7 @@ const Login = () => {
                   alt="logo"
                 />
                 <span className="heading" style={{ width: "100%" }}>
-                  Blah and Blah Management App
+                  Aurora Beauty Management App
                 </span>
                 <span className="content">
                   Welcome to the World of Skincare. Login using your credentials

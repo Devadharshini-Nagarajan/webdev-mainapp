@@ -91,7 +91,7 @@ function UserDetails(props) {
   return (
     <div className="userdetails-content">
       {contextHolder}
-      {state.login.isAdmin && <BackButton path="/users" />}
+      <BackButton path="/users" />
       {state.login.isAdmin ||
       (state.login.username === username && !loading) ? (
         <>
