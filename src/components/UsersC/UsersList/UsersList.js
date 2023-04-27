@@ -71,7 +71,7 @@ function UsersList(props) {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a href={`/user/${record.username}`}>View</a>
+          <Link to={`/user/${record.username}`}>View</Link>
         </Space>
       ),
     },

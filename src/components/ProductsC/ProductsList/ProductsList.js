@@ -335,26 +335,31 @@ const ProductsList = () => {
         }}
       >
         <div>
-          <span>Filters: </span>
+          {getTagFilters().length > 0 && (
+            <>
+              <span>Filters: </span>
 
-          <Space size={[0, 8]} wrap>
-            {getTagFilters().map((el, key) => {
-              return (
-                <Tag
-                  color={
-                    "#" +
-                    (((1 << 24) * Math.random()) | 0)
-                      .toString(16)
-                      .padStart(6, "0")
-                  }
-                  key={key}
-                >
-                  {el}
-                </Tag>
-              );
-            })}
-          </Space>
-          <Button onClick={clearFilters}>Clear all</Button>
+              <Space size={[0, 8]} wrap>
+                {getTagFilters().map((el, key) => {
+                  return (
+                    <Tag
+                      color={
+                        "#" +
+                        (((1 << 24) * Math.random()) | 0)
+                          .toString(16)
+                          .padStart(6, "0")
+                      }
+                      key={key}
+                    >
+                      {el}
+                    </Tag>
+                  );
+                })}
+              </Space>
+
+              <Button onClick={clearFilters}>Clear all</Button>
+            </>
+          )}
         </div>
         <div>
           <Search
@@ -404,14 +409,14 @@ const ProductsList = () => {
             <Panel header="Brand" key="2" style={panelStyle}>
               <Checkbox.Group
                 options={brandList}
-                defaultValue={selectedFilters.brand}
+                value={selectedFilters.brand}
                 onChange={(e) => onFilterChange(e, "brand")}
               />
             </Panel>
             <Panel header="Category" key="3" style={panelStyle}>
               <Checkbox.Group
                 options={categoryList}
-                defaultValue={selectedFilters.category}
+                value={selectedFilters.category}
                 onChange={(e) => onFilterChange(e, "category")}
               />
             </Panel>

@@ -190,73 +190,143 @@ function ProductDetails() {
       {contextHolder}
       <BackButton path="/products" />
       {details.productid ? (
-        <div className="details-content">
-          <div>
-            <img
-              src={`data:image/jpeg;base64,${details.imagefile}`}
-              onError={({ currentTarget }) => {
-                currentTarget.onerror = null; // prevents looping
-                currentTarget.src = `${process.env.PUBLIC_URL}/assets/imgs/noimage.png`;
-              }}
-              alt="Product Image"
-              className="product-img"
-            />
-          </div>
-          <div className="details">
-            <h2>{details.name}</h2>
-            <h4 style={{ textAlign: "center" }}>
-              <span>{details.brand}</span>
-            </h4>
-            <Rate disabled value={details.rating} />
-            <small onClick={onScrollReviews} style={{ cursor: "pointer" }}>
-              {othersReviews.length + (myReview ? 1 : 0)} Reviews
-            </small>
-            <div style={{ marginTop: "15px" }}>
-              <strong>${getDiscount()}</strong>&nbsp;&nbsp;
-              <span style={{ fontFamily: "fantasy" }}>
-                (Discount: {details.discount}%)
+        <>
+          <div className="details-content">
+            <div>
+              <img
+                src={`data:image/jpeg;base64,${details.imagefile}`}
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null; // prevents looping
+                  currentTarget.src = `${process.env.PUBLIC_URL}/assets/imgs/noimage.png`;
+                }}
+                alt="Product Image"
+                className="product-img"
+              />
+            </div>
+            <div className="details">
+              <h2>{details.name}</h2>
+              <h4 style={{ textAlign: "center" }}>
+                <span>{details.brand}</span>
+              </h4>
+              <Rate disabled value={details.rating} />
+              <small onClick={onScrollReviews} style={{ cursor: "pointer" }}>
+                {othersReviews.length + (myReview ? 1 : 0)} Reviews
+              </small>
+              <div style={{ marginTop: "15px" }}>
+                <strong>${getDiscount()}</strong>&nbsp;&nbsp;
+                <span style={{ fontFamily: "fantasy" }}>
+                  (Discount: {details.discount}%)
+                </span>
+                <p>Original Amount $ {details.price}</p>
+                <p>{details.sold} sold out</p>
+              </div>
+
+              {!state.login.isAdmin && (
+                <div className="actions">
+                  <Button
+                    type="primary"
+                    style={{ marginRight: "10px" }}
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    {purchased.length ? "Order Again" : "Purchase"}
+                  </Button>
+                </div>
+              )}
+
+              <h2>About the product</h2>
+              <div className="set2">
+                <div>
+                  <b>Description: &nbsp;&nbsp;</b>
+                  <span>{details.description}</span>
+                </div>
+                <div>
+                  <b>Category: &nbsp;</b>
+                  <span>{details.category}</span>
+                </div>
+                <div>
+                  <b>Standard size: &nbsp;</b>
+                  <span>{details.quantityml} ml</span>
+                </div>
+              </div>
+              {state.login.isAdmin && (
+                <div>
+                  <b>Created by</b>&nbsp; {details.createdby}
+                </div>
+              )}
+              <span style={{ fontFamily: "initial" }}>
+                Created on: {getDate(details.createdat)}
               </span>
-              <p>Original Amount $ {details.price}</p>
-              <p>{details.sold} sold out</p>
             </div>
-
-            {!state.login.isAdmin && (
-              <div className="actions">
-                <Button
-                  type="primary"
-                  style={{ marginRight: "10px" }}
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  {purchased.length ? "Order Again" : "Purchase"}
-                </Button>
-              </div>
-            )}
-
-            <h2>About the product</h2>
-            <div className="set2">
-              <div>
-                <b>Description: &nbsp;&nbsp;</b>
-                <span>{details.description}</span>
-              </div>
-              <div>
-                <b>Category: &nbsp;</b>
-                <span>{details.category}</span>
-              </div>
-              <div>
-                <b>Standard size: &nbsp;</b>
-                <span>{details.quantityml} ml</span>
-              </div>
-            </div>
-            {state.login.isAdmin && (
-              <div>
-                <b>Created by</b>&nbsp; {details.createdby}
-              </div>
-            )}
-            <span style={{ fontFamily: "initial" }}>
-              Created on: {getDate(details.createdat)}
-            </span>
           </div>
-        </div>
+          <Tabs
+            defaultActiveKey="1"
+            style={{ marginBottom: "12rem" }}
+            items={[
+              {
+                label: "Reviews",
+                key: "1",
+                children: (
+                  <div ref={ref}>
+                    {purchased.length > 0 && !state.login.isAdmin && (
+                      <>
+                        <h2>My Review</h2>
+                        {myReview ? (
+                          <Review review={myReview} />
+                        ) : (
+                          <Button
+                            type="primary"
+                            onClick={() => setIsReviewModalOpen(true)}
+                          >
+                            Add Review
+                          </Button>
+                        )}
+                      </>
+                    )}
+
+                    <h2>Other Reviews</h2>
+                    {othersReviews.length
+                      ? othersReviews.map((el) => {
+                          return <Review review={el} key={el.reviewid} />;
+                        })
+                      : "No other reviews yet"}
+                  </div>
+                ),
+              },
+              {
+                label: "Purchase History",
+                key: "2",
+                children: (
+                  <div>
+                    {purchased.length
+                      ? purchased.map((el, key) => {
+                          return (
+                            <Card style={{ marginBottom: "20px" }} key={key}>
+                              {el.productname}
+                              <br></br>
+                              <span style={{ fontFamily: "initial" }}>
+                                Created on: {getDate(el.purchasedate)}
+                              </span>
+                              <br></br>
+                              {state.login.isAdmin && (
+                                <span style={{ fontFamily: "initial" }}>
+                                  Created by: {el.username}
+                                </span>
+                              )}
+                            </Card>
+                          );
+                        })
+                      : "No items has been purchased yet"}
+                  </div>
+                ),
+              },
+              {
+                label: "Articles",
+                key: "3",
+                children: <Articles details={details} />,
+              },
+            ]}
+          />
+        </>
       ) : (
         <div>
           <Result
@@ -296,75 +366,6 @@ function ProductDetails() {
         Would you like to {purchased.length ? "repurchase" : "purchase"} this
         product?
       </Modal>
-
-      <Tabs
-        defaultActiveKey="1"
-        style={{ marginBottom: "12rem" }}
-        items={[
-          {
-            label: "Reviews",
-            key: "1",
-            children: (
-              <div ref={ref}>
-                {purchased.length > 0 && !state.login.isAdmin && (
-                  <>
-                    <h2>My Review</h2>
-                    {myReview ? (
-                      <Review review={myReview} />
-                    ) : (
-                      <Button
-                        type="primary"
-                        onClick={() => setIsReviewModalOpen(true)}
-                      >
-                        Add Review
-                      </Button>
-                    )}
-                  </>
-                )}
-
-                <h2>Other Reviews</h2>
-                {othersReviews.length
-                  ? othersReviews.map((el) => {
-                      return <Review review={el} key={el.reviewid} />;
-                    })
-                  : "No other reviews yet"}
-              </div>
-            ),
-          },
-          {
-            label: "Purchase History",
-            key: "2",
-            children: (
-              <div>
-                {purchased.length
-                  ? purchased.map((el, key) => {
-                      return (
-                        <Card style={{ marginBottom: "20px" }} key={key}>
-                          {el.productname}
-                          <br></br>
-                          <span style={{ fontFamily: "initial" }}>
-                            Created on: {getDate(el.purchasedate)}
-                          </span>
-                          <br></br>
-                          {state.login.isAdmin && (
-                            <span style={{ fontFamily: "initial" }}>
-                              Created by: {el.username}
-                            </span>
-                          )}
-                        </Card>
-                      );
-                    })
-                  : "No items has been purchased yet"}
-              </div>
-            ),
-          },
-          {
-            label: "Articles",
-            key: "3",
-            children: <Articles details={details} />,
-          },
-        ]}
-      />
 
       <Modal
         title="Add Review"
